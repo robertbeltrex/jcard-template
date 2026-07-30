@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Calcolatore Media Value YouTube</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --panel: #ffffff;
+    --text: #1a1d23;
+    --muted: #5b6270;
+    --border: #e1e4e9;
+    --accent: #d64545;
+    --accent-soft: #fdeceb;
+    --good: #1e824c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --panel: #1e2126;
+      --text: #eceef1;
+      --muted: #9aa1ab;
+      --border: #2c3038;
+      --accent: #ef6b62;
+      --accent-soft: #3a2220;
+      --good: #4ad187;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 2rem 1rem 4rem;
+  }
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.25rem;
+  }
+  p.subtitle {
+    color: var(--muted);
+    margin-top: 0;
+    margin-bottom: 2rem;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .panel h2 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.25rem;
+  }
+  @media (max-width: 560px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .field label {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .field .hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    opacity: 0.8;
+  }
+  input[type="number"] {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.55rem 0.7rem;
+    font-size: 1rem;
+    color: var(--text);
+    width: 100%;
+  }
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .retention-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+  }
+  .retention-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+  }
+  .result {
+    text-align: center;
+    padding: 1.75rem 1rem;
+  }
+  .result .total {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--good);
+  }
+  .result .total-label {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.35rem;
+  }
+  table.breakdown {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+  table.breakdown td {
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  table.breakdown td:last-child {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  table.breakdown tr.total-row td {
+    border-bottom: none;
+    border-top: 2px solid var(--border);
+    font-weight: 700;
+    padding-top: 0.7rem;
+  }
+  details {
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  details summary {
+    cursor: pointer;
+    color: var(--text);
+  }
+  details .formula {
+    margin-top: 0.6rem;
+    line-height: 1.5;
+  }
+  code {
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Calcolatore Media Value YouTube</h1>
+  <p class="subtitle">Inserisci i dati del video e ottieni una stima del valore mediatico generato.</p>
+
+  <section class="panel">
+    <h2>Dati del video</h2>
+    <div class="grid">
+      <div class="field">
+        <label for="views">Visualizzazioni</label>
+        <input type="number" id="views" min="0" step="1" value="10000" />
+      </div>
+      <div class="field">
+        <label for="cpm">CPM &mdash; valore per 1000 visualizzazioni (&euro;)</label>
+        <input type="number" id="cpm" min="0" step="0.01" value="10" />
+      </div>
+      <div class="field">
+        <label for="likes">Like</label>
+        <input type="number" id="likes" min="0" step="1" value="500" />
+      </div>
+      <div class="field">
+        <label for="likeValue">Valore per like (&euro;)</label>
+        <input type="number" id="likeValue" min="0" step="0.01" value="0.05" />
+      </div>
+      <div class="field">
+        <label for="comments">Commenti</label>
+        <input type="number" id="comments" min="0" step="1" value="80" />
+      </div>
+      <div class="field">
+        <label for="commentValue">Valore per commento (&euro;)</label>
+        <input type="number" id="commentValue" min="0" step="0.01" value="0.20" />
+      </div>
+      <div class="field">
+        <label for="shares">Condivisioni</label>
+        <input type="number" id="shares" min="0" step="1" value="150" />
+      </div>
+      <div class="field">
+        <label for="shareValue">Valore per condivisione (&euro;)</label>
+        <input type="number" id="shareValue" min="0" step="0.01" value="0.50" />
+      </div>
+      <div class="field">
+        <label for="subs">Nuovi iscritti generati</label>
+        <input type="number" id="subs" min="0" step="1" value="30" />
+      </div>
+      <div class="field">
+        <label for="subValue">Valore per iscritto (&euro;)</label>
+        <input type="number" id="subValue" min="0" step="0.01" value="1.00" />
+      </div>
+    </div>
+
+    <div class="retention-row">
+      <input type="checkbox" id="useRetention" />
+      <label for="useRetention">Pesa il totale con la retention media (% di video guardato)</label>
+    </div>
+    <div class="field" id="retentionField" style="margin-top: 0.6rem; display: none;">
+      <label for="retention">Retention media (%)</label>
+      <input type="number" id="retention" min="0" max="100" step="1" value="50" />
+      <span class="hint">Se attiva, il totale viene moltiplicato per retention/100.</span>
+    </div>
+  </section>
+
+  <section class="panel result">
+    <div class="total-label">Media Value stimato</div>
+    <div class="total" id="totalOutput">&euro; 0,00</div>
+
+    <table class="breakdown" id="breakdownTable"></table>
+
+    <details>
+      <summary>Come viene calcolato</summary>
+      <div class="formula">
+        Valore Base = (Visualizzazioni &divide; 1000) &times; CPM<br />
+        Valore Engagement = (Like &times; valore like) + (Commenti &times; valore commento) + (Condivisioni &times; valore condivisione) + (Iscritti &times; valore iscritto)<br />
+        Totale = Valore Base + Valore Engagement<br />
+        Se la retention &egrave; attiva: Totale finale = Totale &times; (retention &divide; 100)
+      </div>
+    </details>
+  </section>
+</main>
+
+<script>
+(function () {
+  const ids = [
+    "views", "cpm", "likes", "likeValue", "comments", "commentValue",
+    "shares", "shareValue", "subs", "subValue", "retention"
+  ];
+  const inputs = {};
+  ids.forEach(function (id) { inputs[id] = document.getElementById(id); });
+
+  const useRetention = document.getElementById("useRetention");
+  const retentionField = document.getElementById("retentionField");
+  const totalOutput = document.getElementById("totalOutput");
+  const breakdownTable = document.getElementById("breakdownTable");
+
+  function num(id) {
+    const v = parseFloat(inputs[id].value);
+    return isNaN(v) || v < 0 ? 0 : v;
+  }
+
+  function formatEuro(n) {
+    return n.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
+  }
+
+  function row(label, value) {
+    return "<tr><td>" + label + "</td><td>" + formatEuro(value) + "</td></tr>";
+  }
+
+  function calculate() {
+    const views = num("views");
+    const cpm = num("cpm");
+    const likes = num("likes");
+    const likeValue = num("likeValue");
+    const comments = num("comments");
+    const commentValue = num("commentValue");
+    const shares = num("shares");
+    const shareValue = num("shareValue");
+    const subs = num("subs");
+    const subValue = num("subValue");
+
+    const baseValue = (views / 1000) * cpm;
+    const likesValue = likes * likeValue;
+    const commentsValue = comments * commentValue;
+    const sharesValue = shares * shareValue;
+    const subsValue = subs * subValue;
+    const engagementValue = likesValue + commentsValue + sharesValue + subsValue;
+
+    let total = baseValue + engagementValue;
+    let retentionFactor = null;
+
+    if (useRetention.checked) {
+      const retention = Math.min(100, Math.max(0, num("retention")));
+      retentionFactor = retention / 100;
+      total = total * retentionFactor;
+    }
+
+    totalOutput.textContent = formatEuro(total);
+
+    let html = "";
+    html += row("Valore base (visualizzazioni &times; CPM)", baseValue);
+    html += row("Valore like", likesValue);
+    html += row("Valore commenti", commentsValue);
+    html += row("Valore condivisioni", sharesValue);
+    html += row("Valore nuovi iscritti", subsValue);
+    if (retentionFactor !== null) {
+      html += row("Fattore retention applicato", 0).replace(
+        formatEuro(0),
+        (retentionFactor * 100).toFixed(0) + "%"
+      );
+    }
+    html += "<tr class=\"total-row\"><td>Totale</td><td>" + formatEuro(total) + "</td></tr>";
+    breakdownTable.innerHTML = html;
+  }
+
+  useRetention.addEventListener("change", function () {
+    retentionField.style.display = useRetention.checked ? "flex" : "none";
+    calculate();
+  });
+
+  ids.forEach(function (id) {
+    inputs[id].addEventListener("input", calculate);
+  });
+
+  calculate();
+})();
+</script>
+</body>
+</html>
